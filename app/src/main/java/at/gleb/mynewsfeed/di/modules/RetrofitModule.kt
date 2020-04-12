@@ -11,7 +11,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import javax.inject.Named
 
 const val RETROFIT_BUILDER = "RETROFIT_BUILDER"
-const val SERVER_URL = "todo"//todo
 
 @Module
 class RetrofitModule {
@@ -26,5 +25,4 @@ class RetrofitModule {
         .client(client)
         .addConverterFactory(JacksonConverterFactory.create(mapper))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-        .baseUrl(SERVER_URL)
 }

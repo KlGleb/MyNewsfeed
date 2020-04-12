@@ -22,6 +22,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -43,6 +48,9 @@ dependencies {
     def rxJavaVersion = "3.0.2"
     implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
 
+    def rxAndroidVersion = "3.0.0"
+    implementation "io.reactivex.rxjava3:rxandroid:$rxAndroidVersion"
+
     def rxKotlinVersion = "3.0.0"
     implementation "io.reactivex.rxjava3:rxkotlin:$rxKotlinVersion"
 
@@ -61,5 +69,9 @@ dependencies {
 
     def rxJavaRetrofitAdapterVersion = "3.0.0"
     implementation "com.github.akarnokd:rxjava3-retrofit-adapter:$rxJavaRetrofitAdapterVersion"
+
+    def stethoVersion = "1.5.1"
+    implementation "com.facebook.stetho:stetho:$stethoVersion"
+    implementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 
 }
