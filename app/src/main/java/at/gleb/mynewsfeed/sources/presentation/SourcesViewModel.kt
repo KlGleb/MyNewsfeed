@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import at.gleb.mynewsfeed.domain.NewsInteractor
-import at.gleb.mynewsfeed.domain.entity.SourceVo
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
@@ -37,10 +36,6 @@ class SourcesViewModel @Inject constructor(
     override fun onCleared() {
         disposable.dispose()
         super.onCleared()
-    }
-
-    fun onItemClick(sourceVo: SourceVo) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     fun onRefresh() {
