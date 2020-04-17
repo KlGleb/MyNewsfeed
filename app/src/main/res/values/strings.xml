@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">MyNewsfeed</string>
     <string name="refresh_button">Try again</string>
-    <string name="refresh_label">Something was wrong!</string>
+    <string name="refresh_label">Could not load the sources</string>
 </resources>

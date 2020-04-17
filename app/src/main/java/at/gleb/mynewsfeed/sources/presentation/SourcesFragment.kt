@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.gleb.mynewsfeed.App
+import at.gleb.mynewsfeed.R
 import at.gleb.mynewsfeed.databinding.FragmentSourcesBinding
 import at.gleb.mynewsfeed.sources.presentation.rv.SourcesRecyclerViewAdapter
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 class SourcesFragment : Fragment() {
@@ -71,13 +73,25 @@ class SourcesFragment : Fragment() {
     private fun showSources(state: SourcesState.ShowSources) {
         toggleProgress(false)
         toggleErrorLayout(false)
-        binding.swipeRefreshLayout.isRefreshing = false
         adapter.submitList(state.states)
     }
 
     private fun showError() {
         toggleProgress(false)
-        toggleErrorLayout(true)
+        if (adapter.itemCount == 0) {
+            toggleErrorLayout(true)
+        } else {
+            view?.let {
+                Snackbar.make(it, R.string.refresh_label, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.refresh_button) {
+                        viewModel.onRefresh()
+                    }
+                    .run {
+                        show()
+                    }
+            }
+
+        }
     }
 
     private fun toggleProgress(isProgress: Boolean) {

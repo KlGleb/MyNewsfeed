@@ -20,6 +20,17 @@ class SourcesViewModel @Inject constructor(
     val sources: LiveData<SourcesState> = _sources
 
     init {
+        disposable += interactor.getSources()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = {
+                    _sources.value = SourcesState.ShowSources(states = it)
+                },
+                onError = {
+                    _sources.value = SourcesState.Error
+                }
+            )
+
         updateData()
     }
 
@@ -38,15 +49,13 @@ class SourcesViewModel @Inject constructor(
 
     private fun updateData() {
         disposable += interactor
-            .getSources()
+            .updateSources()
             .doOnSubscribe {
                 _sources.value = SourcesState.Loading
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onSuccess = {
-                    _sources.value = SourcesState.ShowSources(it)
-                },
+                onComplete = { },
                 onError = {
                     _sources.value = SourcesState.Error
                 }
