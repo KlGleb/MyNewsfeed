@@ -76,7 +76,7 @@ class SourcesFragment : Fragment() {
     private fun showSources(state: SourcesState.ShowSources) {
         toggleProgress(false)
         toggleErrorLayout(false)
-        adapter.submitList(state.states)
+        adapter.submitList(state.list)
     }
 
     private fun showError() {

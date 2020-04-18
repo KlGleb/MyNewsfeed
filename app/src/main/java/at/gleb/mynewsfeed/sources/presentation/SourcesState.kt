@@ -4,7 +4,7 @@ import at.gleb.mynewsfeed.domain.entity.SourceVo
 
 
 sealed class SourcesState {
-    data class ShowSources(val states: List<SourceVo>) : SourcesState()
+    data class ShowSources(val list: List<SourceVo>) : SourcesState()
     object Loading : SourcesState()
     object Error : SourcesState()
 }

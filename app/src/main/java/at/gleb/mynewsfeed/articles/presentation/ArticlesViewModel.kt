@@ -1,4 +1,4 @@
-package at.gleb.mynewsfeed.sources.presentation
+package at.gleb.mynewsfeed.articles.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,23 +10,23 @@ import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import javax.inject.Inject
 
-class SourcesViewModel @Inject constructor(
+class ArticlesViewModel @Inject constructor(
     private val interactor: NewsInteractor
 ) : ViewModel() {
     private val disposable = CompositeDisposable()
 
-    private val _sources = MutableLiveData<SourcesState>()
-    val sources: LiveData<SourcesState> = _sources
+    private val _articles = MutableLiveData<ArticlesState>()
+    val articles: LiveData<ArticlesState> = _articles
 
-    init {
-        disposable += interactor.getSources()
+    fun onGetSourceId(sourceId: String) {
+        disposable += interactor.getArticles(sourceId)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onNext = {
-                    _sources.value = SourcesState.ShowSources(list = it)
+                    _articles.value = ArticlesState.ShowArticles(list = it)
                 },
                 onError = {
-                    _sources.value = SourcesState.Error
+                    _articles.value = ArticlesState.Error
                 }
             )
 
@@ -43,17 +43,17 @@ class SourcesViewModel @Inject constructor(
     }
 
     private fun updateData() {
-        disposable += interactor
-            .updateSources()
-            .doOnSubscribe {
-                _sources.value = SourcesState.Loading
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onComplete = { },
-                onError = {
-                    _sources.value = SourcesState.Error
-                }
-            )
+        /* disposable += interactor
+             .updateSources()
+             .doOnSubscribe {
+                 _sources.value = ArticlesState.Loading
+             }
+             .observeOn(AndroidSchedulers.mainThread())
+             .subscribeBy(
+                 onComplete = { },
+                 onError = {
+                     _sources.value = ArticlesState.Error
+                 }
+             )*/
     }
 }
