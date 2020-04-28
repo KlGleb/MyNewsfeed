@@ -1,35 +1,40 @@
 package at.gleb.mynewsfeed.articles.presentation
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.paging.PagedList
+import androidx.paging.toLiveData
+import at.gleb.mynewsfeed.articles.data.ArticleDataSourceFactory
+import at.gleb.mynewsfeed.articles.di.ArticlesComponent
+import at.gleb.mynewsfeed.articles.di.ArticlesPagingModule
+import at.gleb.mynewsfeed.di.AppScope
 import at.gleb.mynewsfeed.domain.NewsInteractor
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import at.gleb.mynewsfeed.domain.entity.ArticleVo
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.plusAssign
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import javax.inject.Inject
+import javax.inject.Provider
 
+@AppScope
 class ArticlesViewModel @Inject constructor(
-    private val interactor: NewsInteractor
+    private val interactor: NewsInteractor,
+    private val articleComponentProvider: Provider<ArticlesComponent.Builder>
 ) : ViewModel() {
     private val disposable = CompositeDisposable()
 
-    private val _articles = MutableLiveData<ArticlesState>()
-    val articles: LiveData<ArticlesState> = _articles
+    @Inject
+    lateinit var dataSourceFactory: ArticleDataSourceFactory
+
+    lateinit var sourceId: String
+    lateinit var articles: LiveData<PagedList<ArticleVo>>
 
     fun onGetSourceId(sourceId: String) {
-        disposable += interactor.getArticles(sourceId)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = {
-                    _articles.value = ArticlesState.ShowArticles(list = it)
-                },
-                onError = {
-                    _articles.value = ArticlesState.Error
-                }
-            )
+        articleComponentProvider.get()
+            .articlesPagingModule(ArticlesPagingModule(sourceId))
+            .build()
+            .inject(this)
 
+        this.sourceId = sourceId
+        articles = dataSourceFactory.toLiveData(1)
         updateData()
     }
 
@@ -43,17 +48,6 @@ class ArticlesViewModel @Inject constructor(
     }
 
     private fun updateData() {
-        /* disposable += interactor
-             .updateSources()
-             .doOnSubscribe {
-                 _sources.value = ArticlesState.Loading
-             }
-             .observeOn(AndroidSchedulers.mainThread())
-             .subscribeBy(
-                 onComplete = { },
-                 onError = {
-                     _sources.value = ArticlesState.Error
-                 }
-             )*/
+        dataSourceFactory.sourceLiveData.value?.invalidate()
     }
 }

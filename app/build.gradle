@@ -61,6 +61,10 @@ dependencies {
     // Dynamic Feature Module Support
     //implementation "androidx.navigation:navigation-dynamic-features-fragment:$navVersion"
 
+    def pagingVersion = "2.1.2"
+    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
+    implementation "androidx.paging:paging-rxjava2-ktx:$pagingVersion"
+
     def daggerVersion = "2.27"
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"

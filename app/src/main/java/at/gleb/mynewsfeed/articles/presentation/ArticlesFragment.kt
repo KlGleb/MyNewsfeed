@@ -15,6 +15,7 @@ import at.gleb.mynewsfeed.articles.presentation.rv.ArticlesRecyclerViewAdapter
 import at.gleb.mynewsfeed.databinding.FragmentArticlesBinding
 import javax.inject.Inject
 
+const val SCROLL_POSITION = "SCROLL_POSITION"
 class ArticlesFragment : Fragment() {
     private var _binding: FragmentArticlesBinding? = null
     private val binding get() = _binding!!
@@ -46,16 +47,20 @@ class ArticlesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         App.dagger.inject(this)
         viewModel = ViewModelProvider(this, viewModelFactory)[ArticlesViewModel::class.java]
-
+/*
         viewModel.articles.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is ArticlesState.ShowArticles -> showSources(it)
                 ArticlesState.Loading -> toggleProgress(true)
                 ArticlesState.Error -> showError()
             }
-        })
+        })*/
 
         viewModel.onGetSourceId(args.sourceId!!)//todo: default source id
+
+        viewModel.articles.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+        })
 
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
@@ -86,5 +91,22 @@ class ArticlesFragment : Fragment() {
         toggleProgress(false)
 //        toggleErrorLayout(false)
         adapter.submitList(state.list)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(
+            SCROLL_POSITION,
+            (binding.recyclerView.layoutManager as LinearLayoutManager?)?.findFirstVisibleItemPosition()
+                ?: 0
+        )
+        super.onSaveInstanceState(outState)
+    }
+
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        savedInstanceState?.getInt(SCROLL_POSITION)?.let {
+            binding.recyclerView.post { binding.recyclerView.scrollToPosition(it) }
+        }
+        super.onViewStateRestored(savedInstanceState)
     }
 }

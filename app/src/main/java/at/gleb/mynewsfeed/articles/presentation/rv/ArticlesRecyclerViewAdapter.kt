@@ -2,12 +2,12 @@ package at.gleb.mynewsfeed.articles.presentation.rv
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagedListAdapter
 import at.gleb.mynewsfeed.databinding.ArticleItemBinding
 import at.gleb.mynewsfeed.domain.entity.ArticleVo
 
 class ArticlesRecyclerViewAdapter(private val callback: (ArticleVo) -> Unit) :
-    ListAdapter<ArticleVo, ArticlesViewHolder>(ArticlesDiffCallback()) {
+    PagedListAdapter<ArticleVo, ArticlesViewHolder>(ArticlesDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticlesViewHolder {
         val inflater = LayoutInflater.from(parent.context)

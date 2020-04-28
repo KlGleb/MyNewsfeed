@@ -12,6 +12,7 @@ interface NewsApiService {
     fun getEverything(
         @Query("language") language: String? = null,
         @Query("page") page: Int? = null,
+        @Query("pageSize") pageSize: Int? = null,
         @Query("sources") sources: String? = null
     ): Single<ResponseEverythingDto>
 
