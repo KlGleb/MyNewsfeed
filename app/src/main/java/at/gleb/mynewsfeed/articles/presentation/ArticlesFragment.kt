@@ -6,23 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import at.gleb.mynewsfeed.App
 import at.gleb.mynewsfeed.articles.presentation.rv.ArticlesRecyclerViewAdapter
 import at.gleb.mynewsfeed.databinding.FragmentArticlesBinding
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val SCROLL_POSITION = "SCROLL_POSITION"
+
 class ArticlesFragment : Fragment() {
     private var _binding: FragmentArticlesBinding? = null
     private val binding get() = _binding!!
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    lateinit var viewModel: ArticlesViewModel
+    val articlesViewModel: ArticlesViewModel by viewModel()
 
     private val args: ArticlesFragmentArgs by navArgs()
 
@@ -45,8 +42,7 @@ class ArticlesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        App.dagger.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[ArticlesViewModel::class.java]
+        //App.dagger.inject(this)
 /*
         viewModel.articles.observe(viewLifecycleOwner, Observer {
             when (it) {
@@ -56,9 +52,9 @@ class ArticlesFragment : Fragment() {
             }
         })*/
 
-        viewModel.onGetSourceId(args.sourceId!!)//todo: default source id
+        articlesViewModel.onGetSourceId(args.sourceId!!)//todo: default source id
 
-        viewModel.articles.observe(viewLifecycleOwner, Observer {
+        articlesViewModel.articles.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })
 
@@ -69,7 +65,7 @@ class ArticlesFragment : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.onRefresh()
+            articlesViewModel.onRefresh()
         }
 /*
         binding.refreshButton.setOnClickListener {

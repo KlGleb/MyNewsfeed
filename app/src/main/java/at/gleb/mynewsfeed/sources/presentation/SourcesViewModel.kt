@@ -8,9 +8,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
 import io.reactivex.rxjava3.kotlin.subscribeBy
-import javax.inject.Inject
 
-class SourcesViewModel @Inject constructor(
+class SourcesViewModel(
     private val interactor: NewsInteractor
 ) : ViewModel() {
     private val disposable = CompositeDisposable()

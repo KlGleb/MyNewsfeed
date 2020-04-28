@@ -6,26 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
-import at.gleb.mynewsfeed.App
 import at.gleb.mynewsfeed.R
 import at.gleb.mynewsfeed.databinding.FragmentSourcesBinding
 import at.gleb.mynewsfeed.sources.presentation.rv.SourcesRecyclerViewAdapter
 import com.google.android.material.snackbar.Snackbar
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SourcesFragment : Fragment() {
     private var _binding: FragmentSourcesBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    lateinit var viewModel: SourcesViewModel
+    val sourcesViewModel: SourcesViewModel by viewModel()
 
     private val adapter by lazy {
         SourcesRecyclerViewAdapter {
@@ -45,10 +40,8 @@ class SourcesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        App.dagger.inject(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[SourcesViewModel::class.java]
 
-        viewModel.sources.observe(viewLifecycleOwner, Observer {
+        sourcesViewModel.sources.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is SourcesState.ShowSources -> showSources(it)
                 SourcesState.Loading -> toggleProgress(true)
@@ -63,11 +56,11 @@ class SourcesFragment : Fragment() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.onRefresh()
+            sourcesViewModel.onRefresh()
         }
 
         binding.refreshButton.setOnClickListener {
-            viewModel.onRefresh()
+            sourcesViewModel.onRefresh()
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -87,7 +80,7 @@ class SourcesFragment : Fragment() {
             view?.let {
                 Snackbar.make(it, R.string.refresh_label, Snackbar.LENGTH_LONG)
                     .setAction(R.string.refresh_button) {
-                        viewModel.onRefresh()
+                        sourcesViewModel.onRefresh()
                     }
                     .run {
                         show()

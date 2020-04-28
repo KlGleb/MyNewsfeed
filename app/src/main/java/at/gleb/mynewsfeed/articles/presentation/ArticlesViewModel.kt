@@ -5,33 +5,31 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import at.gleb.mynewsfeed.articles.data.ArticleDataSourceFactory
-import at.gleb.mynewsfeed.articles.di.ArticlesComponent
-import at.gleb.mynewsfeed.articles.di.ArticlesPagingModule
-import at.gleb.mynewsfeed.di.AppScope
 import at.gleb.mynewsfeed.domain.NewsInteractor
 import at.gleb.mynewsfeed.domain.entity.ArticleVo
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import javax.inject.Inject
-import javax.inject.Provider
+import org.koin.core.parameter.parametersOf
+import org.koin.java.KoinJavaComponent.inject
 
-@AppScope
-class ArticlesViewModel @Inject constructor(
-    private val interactor: NewsInteractor,
-    private val articleComponentProvider: Provider<ArticlesComponent.Builder>
+class ArticlesViewModel(
+    private val interactor: NewsInteractor/*,
+    private val articleComponentProvider: Provider<ArticlesComponent.Builder>*/
 ) : ViewModel() {
     private val disposable = CompositeDisposable()
 
-    @Inject
-    lateinit var dataSourceFactory: ArticleDataSourceFactory
+    val dataSourceFactory: ArticleDataSourceFactory by inject(ArticleDataSourceFactory::class.java) {
+        parametersOf(sourceId)
+    }
 
     lateinit var sourceId: String
     lateinit var articles: LiveData<PagedList<ArticleVo>>
 
     fun onGetSourceId(sourceId: String) {
-        articleComponentProvider.get()
-            .articlesPagingModule(ArticlesPagingModule(sourceId))
-            .build()
-            .inject(this)
+        //dataSourceFactory = get( ArticleDataSourceFactory::class.java,null, )
+        /* articleComponentProvider.get()
+             .articlesPagingModule(ArticlesPagingModule(sourceId))
+             .build()
+             .inject(this)*/
 
         this.sourceId = sourceId
         articles = dataSourceFactory.toLiveData(1)

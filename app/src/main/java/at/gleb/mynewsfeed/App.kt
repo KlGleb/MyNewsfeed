@@ -1,8 +1,10 @@
 package at.gleb.mynewsfeed
 
 import android.app.Application
-import at.gleb.mynewsfeed.di.AppComponent
-import at.gleb.mynewsfeed.di.DaggerAppComponent
+import at.gleb.mynewsfeed.di.appModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 
 class App : Application() {
     override fun onCreate() {
@@ -11,10 +13,10 @@ class App : Application() {
     }
 
     private fun init() {
-        dagger = DaggerAppComponent.builder().application(this).build()
-    }
-
-    companion object {
-        lateinit var dagger: AppComponent
+        startKoin {
+            androidContext(this@App)
+            modules(appModule)
+            androidLogger()
+        }
     }
 }
