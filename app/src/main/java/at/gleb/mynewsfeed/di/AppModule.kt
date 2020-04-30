@@ -71,7 +71,7 @@ val appModule = module {
     single<NewsRepository> { NewsRepositoryImpl(get(), get()) }
     single { NewsInteractor(get()) }
     viewModel { SourcesViewModel(get()) }
-    viewModel { ArticlesViewModel(get()) }
+    viewModel { ArticlesViewModel() }
 
     factory { (sourceId: String) ->
         ArticleDataSourceFactory(get(), sourceId)

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import at.gleb.mynewsfeed.articles.presentation.rv.ArticlesRecyclerViewAdapter
 import at.gleb.mynewsfeed.databinding.FragmentArticlesBinding
+import kotlinx.android.synthetic.main.fragment_sources.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val SCROLL_POSITION = "SCROLL_POSITION"
@@ -18,8 +19,7 @@ const val SCROLL_POSITION = "SCROLL_POSITION"
 class ArticlesFragment : Fragment() {
     private var _binding: FragmentArticlesBinding? = null
     private val binding get() = _binding!!
-
-    val articlesViewModel: ArticlesViewModel by viewModel()
+    private val articlesViewModel: ArticlesViewModel by viewModel()
 
     private val args: ArticlesFragmentArgs by navArgs()
 
@@ -42,20 +42,13 @@ class ArticlesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //App.dagger.inject(this)
-/*
-        viewModel.articles.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is ArticlesState.ShowArticles -> showSources(it)
-                ArticlesState.Loading -> toggleProgress(true)
-                ArticlesState.Error -> showError()
-            }
-        })*/
-
         articlesViewModel.onGetSourceId(args.sourceId!!)//todo: default source id
 
         articlesViewModel.articles.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
+            if (swipeRefreshLayout.isRefreshing) {
+                swipeRefreshLayout.isRefreshing = false
+            }
         })
 
         binding.recyclerView.apply {
@@ -67,10 +60,6 @@ class ArticlesFragment : Fragment() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             articlesViewModel.onRefresh()
         }
-/*
-        binding.refreshButton.setOnClickListener {
-            viewModel.onRefresh()
-        }*/
 
         super.onViewCreated(view, savedInstanceState)
     }
