@@ -12,12 +12,5 @@ class MainActivity : AppCompatActivity() {
 
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
-/*
-        val fragment = SourcesFragment()
-        supportFragmentManager.beginTransaction().run {
-            replace(R.id.container, fragment)
-            addToBackStack(null)
-            commit()
-        }*/
     }
 }

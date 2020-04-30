@@ -2,10 +2,13 @@ package at.gleb.mynewsfeed.articles.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,12 +28,9 @@ class ArticlesFragment : Fragment() {
 
     private val adapter by lazy {
         ArticlesRecyclerViewAdapter {
-            /*  findNavController().navigate(
-                  SourcesFragmentDirections.actionSourcesFragmentToArticlesFragment(it.id)
-              )*/
+            //todo: navigate to the article
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +39,16 @@ class ArticlesFragment : Fragment() {
     ): View? {
         _binding = FragmentArticlesBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,20 +74,6 @@ class ArticlesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun showError() {
-
-    }
-
-    private fun toggleProgress(visible: Boolean) {
-
-    }
-
-    private fun showSources(state: ArticlesState.ShowArticles) {
-        toggleProgress(false)
-//        toggleErrorLayout(false)
-        adapter.submitList(state.list)
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(
             SCROLL_POSITION,
@@ -93,5 +89,15 @@ class ArticlesFragment : Fragment() {
             binding.recyclerView.post { binding.recyclerView.scrollToPosition(it) }
         }
         super.onViewStateRestored(savedInstanceState)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                findNavController().navigateUp()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
