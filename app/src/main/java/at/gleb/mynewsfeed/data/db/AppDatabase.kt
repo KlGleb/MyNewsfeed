@@ -7,5 +7,5 @@ import at.gleb.mynewsfeed.data.db.entity.SourceEntity
 
 @Database(entities = [SourceEntity::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): SourceDao
+    abstract fun sourceDao(): SourceDao
 }

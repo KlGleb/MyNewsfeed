@@ -1,7 +1,7 @@
 package at.gleb.mynewsfeed.data.dto
 
 open class BaseResponseDto(
-    val status: ResponseStatus? = null,
-    val code: ErrorCode? = null,
-    val message: String? = null
+    var status: ResponseStatus? = null,
+    var code: ErrorCode? = null,
+    var message: String? = null
 )

@@ -33,6 +33,7 @@ const val RETROFIT_BUILDER = "RETROFIT_BUILDER"
 
 val appModule = module {
     single { Room.databaseBuilder(get(), AppDatabase::class.java, DB_NAME).build() }
+    single { get<AppDatabase>().sourceDao() }
     single(named(JACKSON_MAPPER)) { jacksonObjectMapper().registerKotlinModule() }
 
     single {
