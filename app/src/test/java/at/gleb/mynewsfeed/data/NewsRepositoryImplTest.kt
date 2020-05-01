@@ -6,7 +6,6 @@ import at.gleb.mynewsfeed.data.dto.ResponseSourcesDto
 import at.gleb.mynewsfeed.data.dto.ResponseStatus
 import at.gleb.mynewsfeed.data.dto.SourceDto
 import at.gleb.mynewsfeed.domain.entity.SourceVo
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.rxjava3.core.Single
 import org.junit.Before
@@ -14,9 +13,9 @@ import org.junit.Test
 import org.mockito.Mockito
 import java.util.concurrent.TimeUnit
 
-
 internal class NewsRepositoryImplTest {
     private lateinit var repositoryImpl: NewsRepositoryImpl
+    private lateinit var sourceDao: SourceDao
 
     private val testSources: List<SourceDto> = arrayListOf(
         SourceDto(
@@ -45,7 +44,7 @@ internal class NewsRepositoryImplTest {
     @Before
     fun before() {
         val apiService = Mockito.mock(NewsApiService::class.java)
-        whenever(apiService.getSources(any())).thenReturn(
+        whenever(apiService.getSources()).thenReturn(
             Single.just(
                 ResponseSourcesDto(testSources).apply {
                     status = ResponseStatus.OK
@@ -53,7 +52,7 @@ internal class NewsRepositoryImplTest {
             )
         )
 
-        val sourceDao: SourceDao = Mockito.mock(SourceDao::class.java)
+        sourceDao = Mockito.mock(SourceDao::class.java)
 
         whenever(sourceDao.getAll()).thenReturn(testSourceEntities)
 
@@ -61,9 +60,9 @@ internal class NewsRepositoryImplTest {
     }
 
     @Test
-    fun `getSources() from cache`() {
+    fun `Get sources from cache`() {
         val testObserver = repositoryImpl.getSources().test()
-        testObserver.await(1000, TimeUnit.MILLISECONDS)
+        testObserver.await(100, TimeUnit.MILLISECONDS)
 
         testObserver.assertValues(
             listOf(
@@ -76,7 +75,39 @@ internal class NewsRepositoryImplTest {
 
 
     @Test
-    fun `getSources() from cache`() {
+    fun `Get sources from server`() {
+        whenever(sourceDao.getAll()).thenReturn(listOf())
 
+        val testObserver = repositoryImpl.getSources().test()
+        repositoryImpl.updateSources().test()
+        testObserver.await(100, TimeUnit.MILLISECONDS)
+
+        testObserver.assertValues(
+            listOf(
+                SourceVo("1", "title", "description", "url"),
+                SourceVo("2", "", "", ""),
+                SourceVo("3", "title", "description", "")
+            )
+        )
+    }
+
+    @Test
+    fun `Get sources from cache and server`() {
+        val testObserver = repositoryImpl.getSources().test()
+        repositoryImpl.updateSources().test()
+        testObserver.await(100, TimeUnit.MILLISECONDS)
+
+        testObserver.assertValues(
+            listOf(
+                SourceVo("1", "title", "description", "url"),
+                SourceVo("2", "title", "description", "url"),
+                SourceVo("3", "title", "description", "url")
+            ),
+            listOf(
+                SourceVo("1", "title", "description", "url"),
+                SourceVo("2", "", "", ""),
+                SourceVo("3", "title", "description", "")
+            )
+        )
     }
 }
