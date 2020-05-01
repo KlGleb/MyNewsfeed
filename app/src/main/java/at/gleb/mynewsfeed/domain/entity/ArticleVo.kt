@@ -7,5 +7,6 @@ data class ArticleVo(
     val description: String,
     val thumbnail: String,
     val author: String,
-    val publishedDate: Date
+    val publishedDate: Date,
+    val url: String?
 )

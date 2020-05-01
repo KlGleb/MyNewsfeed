@@ -1,5 +1,7 @@
 package at.gleb.mynewsfeed.articles.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -27,8 +29,11 @@ class ArticlesFragment : Fragment() {
     private val args: ArticlesFragmentArgs by navArgs()
 
     private val adapter by lazy {
-        ArticlesRecyclerViewAdapter {
-            //todo: navigate to the article
+        ArticlesRecyclerViewAdapter { article ->
+            article.url?.let {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                startActivity(browserIntent)
+            }
         }
     }
 

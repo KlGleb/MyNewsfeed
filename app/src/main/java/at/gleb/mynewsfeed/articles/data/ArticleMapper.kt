@@ -10,6 +10,7 @@ fun List<ArticleDto>?.toArticleVos() = this?.map { articleDto ->
         description = articleDto.description.orEmpty(),
         thumbnail = articleDto.urlToImage.orEmpty(),
         author = articleDto.author.orEmpty(),
-        publishedDate = articleDto.publishedAt ?: Date(0)
+        publishedDate = articleDto.publishedAt ?: Date(0),
+        url = articleDto.url
     )
 } ?: arrayListOf()
